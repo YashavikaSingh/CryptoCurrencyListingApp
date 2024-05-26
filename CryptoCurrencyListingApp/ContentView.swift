@@ -9,13 +9,14 @@ import SwiftUI
 import CoreData
 
 struct ContentView: View {
+
+    
     @StateObject private var viewModel = CryptoCurrencyViewModel()
     
     
     var body: some View {
         ZStack{
             
-//
             if(viewModel.isLoading)
             {
                 Text("Loading...")
@@ -45,7 +46,8 @@ struct ContentView: View {
     }
     
     private var header: some View{
-        Text("Top 10 cryptocurrencies").font(.title)
+        
+        Text("Top 10 Cryptocurrencies").padding().font(.custom("Futura-Bold", size: 35))
     }
     
     
@@ -81,10 +83,11 @@ struct ContentView: View {
         let currency : CryptoCurrency
         var body: some View{
             HStack{
+                rank
                 icon
                 name
                 symbol
-                price
+                priceAndChange
             }.padding(8)
                 .frame(height: 50)
                 .overlay(RoundedRectangle(cornerRadius: 5).stroke(.secondary.opacity(0.8), lineWidth: 0.5))
@@ -102,16 +105,39 @@ struct ContentView: View {
             Text(currency.symbol)
                 .font(.callout)
                 .fontWeight(.medium)
-            //                .foregroundColor(.white)
                 .frame(maxWidth: .infinity, alignment: .center)
         }
         
-        private var price: some View{
-            Text(currency.price_usd)
-                .font(.callout)
-                .fontWeight(.medium)
-            //                .foregroundColor(.white)
+        private var priceAndChange: some View{
+            VStack{
+                Text("$ \(currency.price_usd)" )
+                    .font(.footnote)
+                    .fontWeight(.medium)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                
+                
+                HStack{
+                    Image(systemName: currency.isPercentageChange7dPositive ? "arrow.up" : "arrow.down")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 8, height: 8)
+                    Text(currency.percent_change_7d)
+                        .font(.caption2)
+                        
+                }
+                .foregroundColor(currency.isPercentageChange7dPositive ? .green : .red)
                 .frame(maxWidth: .infinity, alignment: .trailing)
+
+            }
+            .padding(.vertical)
+            
+        }
+        
+        
+        private var rank: some View{
+            Text("#\(currency.rank)")
+                .font(.caption)
+                .fontWeight(.light)
         }
         
         private var icon:  some View{
@@ -122,9 +148,9 @@ struct ContentView: View {
             }
             
             .frame(width: 24, height: 24)
-            
-            
-        }
+                    }
+        
+        
         
     }
     
